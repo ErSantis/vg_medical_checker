@@ -1,0 +1,18 @@
+# --- Dependencias básicas ---
+pandas
+rapidfuzz
+tinydb
+python-dotenv
+
+# --- OCR (procesamiento de documentos escaneados) ---
+pillow
+pytesseract
+pdf2image
+PyMuPDF  # Para manejo avanzado de PDFs
+opencv-python  # Para preprocesamiento de imágenes
+numpy  # Para operaciones numéricas en imágenes
+
+# --- Desarrollo y pruebas ---
+pytest
+pytest-cov
+tqdm
