@@ -1,0 +1,324 @@
+{
+  "fecha": {
+    "field": "fecha",
+    "anexo1_value": "24-12-2024",
+    "anexo2_value": "24-12-2024",
+    "anexo3_value": "24/12/2024 22:30",
+    "pair_1_2": {
+      "field": "fecha",
+      "anexo1_value": "24-12-2024",
+      "anexo2_value": "24-12-2024",
+      "similarity_score": 1.0,
+      "status": "Correcto",
+      "reason": "Similitud alta (100.00%)"
+    },
+    "pair_2_3": {
+      "field": "fecha",
+      "anexo1_value": "24-12-2024",
+      "anexo2_value": "24/12/2024 22:30",
+      "similarity_score": 1.0,
+      "status": "Correcto",
+      "reason": "Similitud alta (100.00%)"
+    },
+    "pair_1_3": {
+      "field": "fecha",
+      "anexo1_value": "24-12-2024",
+      "anexo2_value": "24/12/2024 22:30",
+      "similarity_score": 1.0,
+      "status": "Correcto",
+      "reason": "Similitud alta (100.00%)"
+    },
+    "discrepancy_analysis": "Sin discrepancias",
+    "recommendation": "Todos los valores coinciden correctamente"
+  },
+  "paciente": {
+    "field": "paciente",
+    "anexo1_value": "Andrea Cecilia Abri xiques",
+    "anexo2_value": "[No detectado]",
+    "anexo3_value": "ANDREA ABRIL XIQUES",
+    "pair_1_2": {
+      "field": "paciente",
+      "anexo1_value": "Andrea Cecilia Abri xiques",
+      "anexo2_value": "[No detectado]",
+      "similarity_score": 0.0,
+      "status": "Requiere revision",
+      "reason": "Campo no detectado por OCR"
+    },
+    "pair_2_3": {
+      "field": "paciente",
+      "anexo1_value": "[No detectado]",
+      "anexo2_value": "ANDREA ABRIL XIQUES",
+      "similarity_score": 0.0,
+      "status": "Requiere revision",
+      "reason": "Campo no detectado por OCR"
+    },
+    "pair_1_3": {
+      "field": "paciente",
+      "anexo1_value": "Andrea Cecilia Abri xiques",
+      "anexo2_value": "ANDREA ABRIL XIQUES",
+      "similarity_score": 0.8,
+      "status": "Correcto",
+      "reason": "Similitud alta (80.00%)"
+    },
+    "discrepancy_analysis": "Múltiples discrepancias",
+    "recommendation": "Se requiere revisión manual - múltiples valores diferentes"
+  },
+  "identificacion": {
+    "field": "identificacion",
+    "anexo1_value": "123459780",
+    "anexo2_value": "122459780",
+    "anexo3_value": "123459780",
+    "pair_1_2": {
+      "field": "identificacion",
+      "anexo1_value": "123459780",
+      "anexo2_value": "122459780",
+      "similarity_score": 0.8888888888888888,
+      "status": "Correcto",
+      "reason": "Similitud alta (88.89%)"
+    },
+    "pair_2_3": {
+      "field": "identificacion",
+      "anexo1_value": "122459780",
+      "anexo2_value": "123459780",
+      "similarity_score": 0.8888888888888888,
+      "status": "Correcto",
+      "reason": "Similitud alta (88.89%)"
+    },
+    "pair_1_3": {
+      "field": "identificacion",
+      "anexo1_value": "123459780",
+      "anexo2_value": "123459780",
+      "similarity_score": 1.0,
+      "status": "Correcto",
+      "reason": "Similitud alta (100.00%)"
+    },
+    "discrepancy_analysis": "Sin discrepancias",
+    "recommendation": "Todos los valores coinciden correctamente"
+  },
+  "ciudad": {
+    "field": "ciudad",
+    "anexo1_value": "Bucaramanad",
+    "anexo2_value": "[CAMPO NO DISPONIBLE EN ANEXO 2]",
+    "anexo3_value": "Bucaramanga Santander",
+    "pair_1_2": {
+      "field": "ciudad",
+      "anexo1_value": "Bucaramanad",
+      "anexo2_value": "[CAMPO NO DISPONIBLE EN ANEXO 2]",
+      "similarity_score": 0.24390243902439024,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (24.39%), por debajo del umbral (70.00%)"
+    },
+    "pair_2_3": {
+      "field": "ciudad",
+      "anexo1_value": "[CAMPO NO DISPONIBLE EN ANEXO 2]",
+      "anexo2_value": "Bucaramanga Santander",
+      "similarity_score": 0.3921568627450981,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (39.22%), por debajo del umbral (70.00%)"
+    },
+    "pair_1_3": {
+      "field": "ciudad",
+      "anexo1_value": "Bucaramanad",
+      "anexo2_value": "Bucaramanga Santander",
+      "similarity_score": 0.6875,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (68.75%), por debajo del umbral (70.00%)"
+    },
+    "discrepancy_analysis": "Múltiples discrepancias",
+    "recommendation": "Ningún documento coincide - revisar todos los valores"
+  },
+  "medico": {
+    "field": "medico",
+    "anexo1_value": "Dr. FlorenEio Rosas",
+    "anexo2_value": "elorezcio rosas",
+    "anexo3_value": "FLORENCIO ORQUÍDEO ROSAS BLANCO",
+    "pair_1_2": {
+      "field": "medico",
+      "anexo1_value": "Dr. FlorenEio Rosas",
+      "anexo2_value": "elorezcio rosas",
+      "similarity_score": 0.7272727272727273,
+      "status": "Correcto",
+      "reason": "Similitud alta (72.73%)"
+    },
+    "pair_2_3": {
+      "field": "medico",
+      "anexo1_value": "elorezcio rosas",
+      "anexo2_value": "FLORENCIO ORQUÍDEO ROSAS BLANCO",
+      "similarity_score": 0.5652173913043479,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (56.52%), por debajo del umbral (70.00%)"
+    },
+    "pair_1_3": {
+      "field": "medico",
+      "anexo1_value": "Dr. FlorenEio Rosas",
+      "anexo2_value": "FLORENCIO ORQUÍDEO ROSAS BLANCO",
+      "similarity_score": 0.5714285714285714,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (57.14%), por debajo del umbral (70.00%)"
+    },
+    "discrepancy_analysis": "Múltiples discrepancias",
+    "recommendation": "Se requiere revisión manual - múltiples valores diferentes"
+  },
+  "procedimiento": {
+    "field": "procedimiento",
+    "anexo1_value": "Osteosíntesis encefálica",
+    "anexo2_value": "osfoosintesis encefólica multiple coz",
+    "anexo3_value": "[CAMPO NO DISPONIBLE EN ANEXO 3]",
+    "pair_1_2": {
+      "field": "procedimiento",
+      "anexo1_value": "Osteosíntesis encefálica",
+      "anexo2_value": "osfoosintesis encefólica multiple coz",
+      "similarity_score": 0.875,
+      "status": "Correcto",
+      "reason": "Similitud alta (87.50%)"
+    },
+    "pair_2_3": {
+      "field": "procedimiento",
+      "anexo1_value": "osfoosintesis encefólica multiple coz",
+      "anexo2_value": "[CAMPO NO DISPONIBLE EN ANEXO 3]",
+      "similarity_score": 0.4,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (40.00%), por debajo del umbral (60.00%)"
+    },
+    "pair_1_3": {
+      "field": "procedimiento",
+      "anexo1_value": "Osteosíntesis encefálica",
+      "anexo2_value": "[CAMPO NO DISPONIBLE EN ANEXO 3]",
+      "similarity_score": 0.3829787234042554,
+      "status": "Requiere revision",
+      "reason": "Similitud baja (38.30%), por debajo del umbral (60.00%)"
+    },
+    "discrepancy_analysis": "Múltiples discrepancias",
+    "recommendation": "Se requiere revisión manual - múltiples valores diferentes"
+  },
+  "table_comparison": {
+    "status": "Correcto",
+    "total_similarity": 0.879291284764517,
+    "matched_items": [
+      {
+        "anexo1_item": {
+          "referencia_lote": "21191-1667910920",
+          "descripcion": "Placa curvanervios ×16h",
+          "cantidad": 1
+        },
+        "anexo2_item": {
+          "cantidad": "1",
+          "descripcion": "Ploca curranervios x 16h",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.925531914893617,
+        "overall_similarity": 0.9478723404255318,
+        "status": "Correcto",
+        "reason": "Similitud alta (94.8%)"
+      },
+      {
+        "anexo1_item": {
+          "referencia_lote": "10984-5",
+          "descripcion": "578591od Pin Smartman 2.0",
+          "cantidad": 3
+        },
+        "anexo2_item": {
+          "cantidad": "3",
+          "descripcion": "Pin Smartman 2.0",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.8902439024390244,
+        "overall_similarity": 0.923170731707317,
+        "status": "Correcto",
+        "reason": "Similitud alta (92.3%)"
+      },
+      {
+        "anexo1_item": {
+          "referencia_lote": "31352-218125369",
+          "descripcion": "Torn encefálico 3.5×5o mm",
+          "cantidad": 2
+        },
+        "anexo2_item": {
+          "cantidad": "2",
+          "descripcion": "Tom encefálico 3.5x5o rm",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.840670859538784,
+        "overall_similarity": 0.8884696016771487,
+        "status": "Correcto",
+        "reason": "Similitud alta (88.8%)"
+      },
+      {
+        "anexo1_item": {
+          "referencia_lote": "31352-16789112",
+          "descripcion": "o Torn encecálico 3.5x 48 mm",
+          "cantidad": 1
+        },
+        "anexo2_item": {
+          "cantidad": "1",
+          "descripcion": "Torn encefálico 3.5× 4o mr",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.8392344497607656,
+        "overall_similarity": 0.8874641148325357,
+        "status": "Correcto",
+        "reason": "Similitud alta (88.7%)"
+      },
+      {
+        "anexo1_item": {
+          "referencia_lote": "31352-31812237",
+          "descripcion": "o Tôrn ence fálico 3.5 × 55 mm",
+          "cantidad": 7
+        },
+        "anexo2_item": {
+          "cantidad": "7",
+          "descripcion": "Torn eneefálico 25x 55mm",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.8030060761112887,
+        "overall_similarity": 0.862104253277902,
+        "status": "Correcto",
+        "reason": "Similitud alta (86.2%)"
+      },
+      {
+        "anexo1_item": {
+          "referencia_lote": "21191-10691",
+          "descripcion": "o5436 Placa nervios Curvgnery × 10h",
+          "cantidad": 1
+        },
+        "anexo2_item": {
+          "cantidad": "1",
+          "descripcion": "Placa norvios curvdherv × 1Ader",
+          "observaciones": ""
+        },
+        "cantidad_similarity": 1.0,
+        "descripcion_similarity": 0.6666666666666667,
+        "overall_similarity": 0.7666666666666666,
+        "status": "Correcto",
+        "reason": "Similitud alta (76.7%)"
+      }
+    ],
+    "anexo1_only": [],
+    "anexo2_only": [
+      {
+        "cantidad": "1",
+        "descripcion": "Placu Curod Zorvios curngner 2 16h",
+        "observaciones": ""
+      }
+    ],
+    "summary": {
+      "matches": 6,
+      "anexo1_only": 0,
+      "anexo2_only": 1
+    },
+    "comparison_scope": "anexo1_vs_anexo2_only",
+    "note": "Tabla de insumos comparada únicamente entre anexo 1 y anexo 2 (anexo 3 excluido)"
+  },
+  "overall_status": "Múltiples discrepancias requieren revisión manual",
+  "summary": {
+    "anexo1": 0,
+    "anexo2": 0,
+    "anexo3": 0,
+    "multiples": 4
+  }
+}

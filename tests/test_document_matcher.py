@@ -91,58 +91,44 @@ class TestDocumentMatcher(unittest.TestCase):
         print(f"\n📊 RESUMEN DE COMPARACIÓN DE 3 DOCUMENTOS:")
         print(f"Status general: {report['overall_status']}")
         
-        # Mostrar información de tablas con fuzzy matching
+        # Mostrar información de tablas con nueva lógica (solo anexo 1 vs anexo 2)
         table_info = report['table_comparison']
-        print(f"\n📋 COMPARACIÓN DE INSUMOS (CON FUZZY MATCHING):")
-        print(f"Total insumos únicos: {table_info['summary']['total_unique_items']}")
-        print(f"Anexo 1: {table_info['summary']['total_items_anexo1']} items")
-        print(f"Anexo 2: {table_info['summary']['total_items_anexo2']} items")
-        print(f"Anexo 3: {table_info['summary']['total_items_anexo3']} items")
-        print(f"En los 3 anexos: {table_info['summary']['items_in_all_three']} items")
-        print(f"Solo en anexo 1: {table_info['summary']['items_only_anexo1']} items")
-        print(f"Solo en anexo 2: {table_info['summary']['items_only_anexo2']} items")
-        print(f"Solo en anexo 3: {table_info['summary']['items_only_anexo3']} items")
+        print(f"\n📋 COMPARACIÓN DE INSUMOS (SOLO ANEXO 1 vs ANEXO 2):")
+        print(f"Nota: {table_info.get('note', 'Comparación limitada a anexo 1 y anexo 2')}")
+        print(f"Status: {table_info['status']}")
+        print(f"Similitud total: {table_info['total_similarity']:.1%}")
+        print(f"Items coincidentes: {table_info['summary']['matches']}")
+        print(f"Items solo en anexo 1: {table_info['summary']['anexo1_only']}")
+        print(f"Items solo en anexo 2: {table_info['summary']['anexo2_only']}")
         
-        # Mostrar algunos ejemplos de comparaciones de insumos
-        print(f"\n🔍 EJEMPLOS DE COMPARACIONES DE INSUMOS:")
-        item_count = 0
-        for item_key, insumo_data in table_info['item_comparisons'].items():
-            if item_count < 5:  # Mostrar los primeros 5 ejemplos
-                print(f"📦 {insumo_data['insumo'][:50]}...")
-                print(f"    Anexo 1: {insumo_data['anexo1_value']}")
-                print(f"    Anexo 2: {insumo_data['anexo2_value']}")
-                print(f"    Anexo 3: {insumo_data['anexo3_value']}")
-                print(f"    Análisis: {insumo_data['discrepancy_analysis']}")
-                print(f"    Presente en: {', '.join(insumo_data['present_in_anexos'])}")
-                
-                # Mostrar scores de similitud
-                if insumo_data['pair_1_2']['similarity_score'] > 0:
-                    print(f"    Similitud A1-A2: {insumo_data['pair_1_2']['similarity_score']:.1%}")
-                if insumo_data['pair_2_3']['similarity_score'] > 0:
-                    print(f"    Similitud A2-A3: {insumo_data['pair_2_3']['similarity_score']:.1%}")
-                if insumo_data['pair_1_3']['similarity_score'] > 0:
-                    print(f"    Similitud A1-A3: {insumo_data['pair_1_3']['similarity_score']:.1%}")
-                print()
-                item_count += 1
+        # Mostrar algunos ejemplos de items coincidentes
+        if table_info['matched_items']:
+            print(f"\n🔍 EJEMPLOS DE ITEMS COINCIDENTES:")
+            for i, match in enumerate(table_info['matched_items'][:3], 1):  # Solo los primeros 3
+                print(f"  Match {i}:")
+                print(f"    Anexo1: Cant={match['anexo1_item'].get('cantidad', 'N/A')} - {match['anexo1_item'].get('descripcion', 'N/A')}")
+                print(f"    Anexo2: Cant={match['anexo2_item'].get('cantidad', 'N/A')} - {match['anexo2_item'].get('descripcion', 'N/A')}")
+                print(f"    Similitud descripción: {match['descripcion_similarity']:.1%}")
+                print(f"    Status: {match['status']}")
+            
+            if len(table_info['matched_items']) > 3:
+                print(f"    ... y {len(table_info['matched_items']) - 3} matches más")
         
-        if len(table_info['item_comparisons']) > 5:
-            print(f"... y {len(table_info['item_comparisons']) - 5} insumos más")
+        # Mostrar items solo en anexo1
+        if table_info['anexo1_only']:
+            print(f"\n📦 ITEMS SOLO EN ANEXO 1:")
+            for item in table_info['anexo1_only'][:3]:  # Solo los primeros 3
+                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(table_info['anexo1_only']) > 3:
+                print(f"    ... y {len(table_info['anexo1_only']) - 3} items más")
         
-        # Mostrar algunos ejemplos de comparaciones de insumos
-        print(f"\n� EJEMPLOS DE COMPARACIONES DE INSUMOS:")
-        item_count = 0
-        for insumo_name, insumo_data in table_info['item_comparisons'].items():
-            if item_count < 3:  # Mostrar solo los primeros 3 ejemplos
-                print(f"📦 {insumo_name}:")
-                print(f"    Anexo 1: {insumo_data['anexo1_value']}")
-                print(f"    Anexo 2: {insumo_data['anexo2_value']}")
-                print(f"    Anexo 3: {insumo_data['anexo3_value']}")
-                print(f"    Análisis: {insumo_data['discrepancy_analysis']}")
-                print(f"    Presente en: {', '.join(insumo_data['present_in_anexos'])}")
-                item_count += 1
-        
-        if len(table_info['item_comparisons']) > 3:
-            print(f"... y {len(table_info['item_comparisons']) - 3} insumos más")
+        # Mostrar items solo en anexo2
+        if table_info['anexo2_only']:
+            print(f"\n📦 ITEMS SOLO EN ANEXO 2:")
+            for item in table_info['anexo2_only'][:3]:  # Solo los primeros 3
+                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(table_info['anexo2_only']) > 3:
+                print(f"    ... y {len(table_info['anexo2_only']) - 3} items más")
         
         # Mostrar campos comparados
         print(f"\n🔍 CAMPOS COMPARADOS:")
@@ -156,7 +142,7 @@ class TestDocumentMatcher(unittest.TestCase):
             if data['recommendation']:
                 print(f"    Recomendación: {data['recommendation']}")
         
-        # Validaciones para comparación de 3 documentos
+        # Validaciones para comparación de 3 documentos con nueva lógica
         field_count = len(report['field_comparisons'])
         
         print(f"\n✅ Validación - Campos comparados: {field_count}")
@@ -164,6 +150,7 @@ class TestDocumentMatcher(unittest.TestCase):
         print(f"✅ Validación - Problemas anexo 2: {report['summary']['anexo2_issues']}")
         print(f"✅ Validación - Problemas anexo 3: {report['summary']['anexo3_issues']}")
         print(f"✅ Validación - Discrepancias múltiples: {report['summary']['multiple_discrepancies']}")
+        print(f"✅ Validación - Tabla comparada solo entre anexo 1 y 2: {table_info.get('comparison_scope', 'N/A')}")
         
         # Validación mínima - verificar estructura de 3 documentos
         self.assertIsInstance(report, dict)
@@ -182,12 +169,30 @@ class TestDocumentMatcher(unittest.TestCase):
         self.assertIn('anexo3_issues', summary)
         self.assertIn('multiple_discrepancies', summary)
         
+        # Verificar que la tabla tiene el nuevo scope
+        self.assertEqual(table_info.get('comparison_scope'), 'anexo1_vs_anexo2_only', 
+                        "La tabla debe compararse solo entre anexo 1 y anexo 2")
+        
         # Verificar que cada campo tiene la estructura correcta para 3 documentos
         for field_name, field_data in report['field_comparisons'].items():
             self.assertIn('anexo1_value', field_data)
             self.assertIn('anexo2_value', field_data)
             self.assertIn('anexo3_value', field_data)
             self.assertIn('discrepancy_analysis', field_data)
+        
+        # Verificar estructura de tabla para comparación de 2 documentos
+        self.assertIn('status', table_info)
+        self.assertIn('total_similarity', table_info)
+        self.assertIn('matched_items', table_info)
+        self.assertIn('anexo1_only', table_info)
+        self.assertIn('anexo2_only', table_info)
+        self.assertIn('summary', table_info)
+        
+        # Verificar que el summary de tabla tiene la estructura correcta para 2 documentos
+        table_summary = table_info['summary']
+        self.assertIn('matches', table_summary)
+        self.assertIn('anexo1_only', table_summary)
+        self.assertIn('anexo2_only', table_summary)
 
 
 def run_tests():
