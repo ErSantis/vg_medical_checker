@@ -962,7 +962,7 @@ class DocumentMatcher:
 
     def format_three_way_report(self, comparison: ThreeWayDocumentComparison) -> Dict[str, Any]:
         """
-        Genera reporte formateado de comparación de 3 documentos
+        Genera reporte CLARO y SIMPLE de comparación de 3 documentos
         Campos básicos: comparación entre 3 documentos
         Tabla de insumos: comparación solo entre anexo 1 y anexo 2
         """
@@ -977,49 +977,59 @@ class DocumentMatcher:
             ('medico', comparison.medico),
             ('procedimiento', comparison.procedimiento),
         ]:
+            # Reporte SIMPLIFICADO - sin pair_comparisons complejos
+            status_simple = "✅ CORRECTO" if field_comp.discrepancy_analysis == "Sin discrepancias" else "⚠️ REVISAR"
+            
             fields_report[field_name] = {
                 'anexo1_value': field_comp.anexo1_value,
                 'anexo2_value': field_comp.anexo2_value,
                 'anexo3_value': field_comp.anexo3_value,
-                'discrepancy_analysis': field_comp.discrepancy_analysis,
-                'recommendation': field_comp.recommendation,
-                'pair_comparisons': {
-                    'anexo1_vs_anexo2': {
-                        'similarity_score': field_comp.pair_1_2.similarity_score,
-                        'status': field_comp.pair_1_2.status,
-                        'reason': field_comp.pair_1_2.reason
-                    },
-                    'anexo2_vs_anexo3': {
-                        'similarity_score': field_comp.pair_2_3.similarity_score,
-                        'status': field_comp.pair_2_3.status,
-                        'reason': field_comp.pair_2_3.reason
-                    },
-                    'anexo1_vs_anexo3': {
-                        'similarity_score': field_comp.pair_1_3.similarity_score,
-                        'status': field_comp.pair_1_3.status,
-                        'reason': field_comp.pair_1_3.reason
-                    }
-                }
+                'status': status_simple,
+                'discrepancy_analysis': field_comp.discrepancy_analysis,  # Para compatibilidad con tests
+                'recommendation': field_comp.recommendation,  # Para compatibilidad con tests
+                'problema_detectado': field_comp.discrepancy_analysis,
+                'accion_requerida': field_comp.recommendation,
+                # Calculamos un score general simple basado en las comparaciones por pares
+                'confianza_general': round((
+                    field_comp.pair_1_2.similarity_score + 
+                    field_comp.pair_2_3.similarity_score + 
+                    field_comp.pair_1_3.similarity_score
+                ) / 3, 2)
             }
         
         # Manejar el reporte de tabla que ahora solo compara anexo 1 vs anexo 2
         table_comparison = comparison.table_comparison
         
-        # Formatear el reporte de tabla para que sea consistente con el formato esperado
+        # Reporte SIMPLIFICADO de tabla
+        table_status_simple = "✅ TABLA CORRECTA" if table_comparison['status'] == "Correcto" else "⚠️ TABLA REQUIERE REVISIÓN"
+        
         table_report = {
-            'status': table_comparison['status'],
-            'comparison_scope': table_comparison.get('comparison_scope', 'anexo1_vs_anexo2_only'),
-            'note': table_comparison.get('note', 'Tabla comparada solo entre anexo 1 y anexo 2'),
-            'total_similarity': round(table_comparison['total_similarity'], 3),
-            'summary': table_comparison['summary'],
-            'matched_items': [],
-            'anexo1_only': table_comparison['anexo1_only'],
-            'anexo2_only': table_comparison['anexo2_only']
+            'status': table_status_simple,
+            'total_similarity': table_comparison['total_similarity'],  # Para compatibilidad con tests
+            'similarity': table_comparison['total_similarity'],  # Alias
+            'similitud_total': f"{round(table_comparison['total_similarity'] * 100, 1)}%",
+            'mensaje': table_comparison.get('note', 'Tabla comparada solo entre anexo 1 y anexo 2'),
+            'comparison_scope': table_comparison.get('comparison_scope', 'anexo1_vs_anexo2_only'),  # Para compatibilidad con tests
+            'note': table_comparison.get('note', 'Tabla comparada solo entre anexo 1 y anexo 2'),  # Para compatibilidad con tests
+            'summary': table_comparison['summary'],  # Para compatibilidad con tests
+            'resumen_items': {
+                'items_que_coinciden': table_comparison['summary']['matches'],
+                'items_solo_en_anexo1': table_comparison['summary']['anexo1_only'],
+                'items_solo_en_anexo2': table_comparison['summary']['anexo2_only']
+            },
+            'matched_items': [],  # Se llenará más abajo
+            'anexo1_only': table_comparison['anexo1_only'],  # Para compatibilidad con tests
+            'anexo2_only': table_comparison['anexo2_only'],  # Para compatibilidad con tests
+            'items_coincidentes': [],
+            'items_anexo1_unicos': table_comparison['anexo1_only'],
+            'items_anexo2_unicos': table_comparison['anexo2_only']
         }
         
-        # Detalles de items coincidentes
+        # Detalles SIMPLIFICADOS de items coincidentes
+        matched_items_simple = []
         for match in table_comparison['matched_items']:
-            table_report['matched_items'].append({
+            item_status = "✅ COINCIDE" if match.overall_similarity >= 0.7 else "⚠️ REVISAR"
+            matched_items_simple.append({
                 'anexo1_item': match.anexo1_item,
                 'anexo2_item': match.anexo2_item,
                 'cantidad_similarity': round(match.cantidad_similarity, 3),
@@ -1028,19 +1038,54 @@ class DocumentMatcher:
                 'status': match.status,
                 'reason': match.reason
             })
+            table_report['items_coincidentes'].append({
+                'anexo1': f"Cant: {match.anexo1_item.get('cantidad', 'N/A')} - {match.anexo1_item.get('descripcion', 'N/A')}",
+                'anexo2': f"Cant: {match.anexo2_item.get('cantidad', 'N/A')} - {match.anexo2_item.get('descripcion', 'N/A')}",
+                'status': item_status,
+                'similitud': f"{round(match.overall_similarity * 100, 1)}%"
+            })
+        
+        # Actualizar campo matched_items para compatibilidad con tests
+        table_report['matched_items'] = matched_items_simple
+        
+        # RESUMEN GENERAL SIMPLIFICADO
+        campos_correctos = len([f for f in fields_report.values() if f['status'] == '✅ CORRECTO'])
+        campos_con_problemas = len([f for f in fields_report.values() if f['status'] == '⚠️ REVISAR'])
+        
+        # Determinar qué anexos tienen más problemas
+        anexos_con_problemas = []
+        if comparison.summary['anexo1'] > 0:
+            anexos_con_problemas.append(f"Anexo 1 ({comparison.summary['anexo1']} problemas)")
+        if comparison.summary['anexo2'] > 0:
+            anexos_con_problemas.append(f"Anexo 2 ({comparison.summary['anexo2']} problemas)")
+        if comparison.summary['anexo3'] > 0:
+            anexos_con_problemas.append(f"Anexo 3 ({comparison.summary['anexo3']} problemas)")
+        
+        estado_general = "✅ TODOS LOS DOCUMENTOS ESTÁN CORRECTOS" if not anexos_con_problemas else f"⚠️ REVISAR: {', '.join(anexos_con_problemas)}"
         
         return {
-            'overall_status': comparison.overall_status,
-            'field_comparisons': fields_report,
-            'table_comparison': table_report,
-            'summary': {
+            'overall_status': estado_general,  # Para compatibilidad con tests
+            'ESTADO_GENERAL': estado_general,
+            'field_comparisons': fields_report,  # Para compatibilidad con tests
+            'CAMPOS_COMPARADOS': fields_report,
+            'table_comparison': table_report,  # Para compatibilidad con tests
+            'TABLA_INSUMOS': table_report,
+            'summary': {  # Para compatibilidad con tests
                 'total_fields': len(fields_report),
                 'anexo1_issues': comparison.summary['anexo1'],
                 'anexo2_issues': comparison.summary['anexo2'], 
                 'anexo3_issues': comparison.summary['anexo3'],
                 'multiple_discrepancies': comparison.summary['multiples'],
-                'fields_without_issues': len([f for f in fields_report.values() if f['discrepancy_analysis'] == 'Sin discrepancias']),
+                'fields_without_issues': len([f for f in fields_report.values() if f['problema_detectado'] == 'Sin discrepancias']),
                 'table_comparison_note': 'Tabla de insumos comparada únicamente entre anexo 1 y anexo 2'
+            },
+            'RESUMEN_EJECUTIVO': {
+                'total_campos_revisados': len(fields_report),
+                'campos_correctos': campos_correctos,
+                'campos_con_problemas': campos_con_problemas,
+                'tabla_status': table_status_simple,
+                'anexos_que_requieren_atencion': anexos_con_problemas,
+                'nota_importante': 'Los campos básicos se comparan entre los 3 documentos. La tabla de insumos se compara únicamente entre anexo 1 y anexo 2.'
             }
         }
 
@@ -1100,134 +1145,134 @@ def main():
         three_way_comparison = matcher.compare_three_documents(anexo1_data, anexo2_data, anexo3_data)
         report = matcher.format_three_way_report(three_way_comparison)
         
-        # Mostrar resultados de comparación de 3 documentos
+        # Mostrar resultados de comparación de 3 documentos de manera CLARA
         print("=" * 80)
-        print("REPORTE DE COMPARACIÓN DE 3 DOCUMENTOS (ANEXOS 1, 2 y 3)")
+        print("🔍 REPORTE DE COMPARACIÓN DE DOCUMENTOS MÉDICOS")
         print("=" * 80)
-        print(f"Status General: {report['overall_status']}")
+        print(f"📋 {report['ESTADO_GENERAL']}")
         print()
         
-        print("COMPARACIÓN POR CAMPOS (ENTRE LOS 3 DOCUMENTOS):")
-        print("-" * 80)
-        for field, field_data in report['field_comparisons'].items():
-            print(f"\n{field.upper()}:")
-            print(f"  Anexo 1: {field_data['anexo1_value']}")
-            print(f"  Anexo 2: {field_data['anexo2_value']}")
-            print(f"  Anexo 3: {field_data['anexo3_value']}")
-            print(f"  Análisis: {field_data['discrepancy_analysis']}")
-            if field_data['recommendation']:
-                print(f"  Recomendación: {field_data['recommendation']}")
+        print("📊 RESUMEN EJECUTIVO:")
+        resumen = report['RESUMEN_EJECUTIVO']
+        print(f"   ✓ Campos revisados: {resumen['total_campos_revisados']}")
+        print(f"   ✓ Campos correctos: {resumen['campos_correctos']}")
+        print(f"   ⚠ Campos con problemas: {resumen['campos_con_problemas']}")
+        print(f"   📦 Estado tabla: {resumen['tabla_status']}")
+        
+        if resumen['anexos_que_requieren_atencion']:
+            print(f"   🔍 Anexos que requieren atención: {resumen['anexos_que_requieren_atencion']}")
+        else:
+            print("   ✅ Todos los anexos están correctos")
+        print()
+        
+        print("📝 COMPARACIÓN DETALLADA POR CAMPOS:")
+        print("-" * 50)
+        for field, field_data in report['CAMPOS_COMPARADOS'].items():
+            print(f"\n🏷️  {field.upper()}:")
+            print(f"   📄 Anexo 1: {field_data['anexo1_value']}")
+            print(f"   📄 Anexo 2: {field_data['anexo2_value']}")
+            print(f"   📄 Anexo 3: {field_data['anexo3_value']}")
+            print(f"   📊 {field_data['status']} (Confianza: {field_data['confianza_general']:.0%})")
             
-            if args.verbose:
-                print("  Comparaciones por pares:")
-                for pair_name, pair_data in field_data['pair_comparisons'].items():
-                    print(f"    {pair_name.replace('_', ' vs ')}: {pair_data['similarity_score']:.1%} ({pair_data['status']})")
+            if field_data['status'] == '⚠️ REVISAR':
+                print(f"   🔍 Problema: {field_data['problema_detectado']}")
+                print(f"   💡 Acción: {field_data['accion_requerida']}")
         
-        print(f"\nRESUMEN:")
-        print(f"  Campos sin problemas: {report['summary']['fields_without_issues']}")
-        print(f"  Problemas en anexo 1: {report['summary']['anexo1_issues']}")
-        print(f"  Problemas en anexo 2: {report['summary']['anexo2_issues']}")
-        print(f"  Problemas en anexo 3: {report['summary']['anexo3_issues']}")
-        print(f"  Discrepancias múltiples: {report['summary']['multiple_discrepancies']}")
-        print(f"  Total de campos: {report['summary']['total_fields']}")
+        print(f"\n📦 TABLA DE INSUMOS (ANEXO 1 vs ANEXO 2):")
+        print("-" * 50)
+        tabla_info = report['TABLA_INSUMOS']
+        print(f"   📊 {tabla_info['status']}")
+        print(f"   📈 Similitud total: {tabla_info['similitud_total']}")
+        print(f"   🔢 Items que coinciden: {tabla_info['resumen_items']['items_que_coinciden']}")
+        print(f"   📋 Items solo en anexo 1: {tabla_info['resumen_items']['items_solo_en_anexo1']}")
+        print(f"   📋 Items solo en anexo 2: {tabla_info['resumen_items']['items_solo_en_anexo2']}")
         
-        # Mostrar información de comparación de tablas (solo anexo 1 vs anexo 2)
-        table_info = report['table_comparison']
-        print(f"\nCOMPARACIÓN DE TABLA DE INSUMOS (SOLO ANEXO 1 vs ANEXO 2):")
-        print("-" * 80)
-        print(f"  Nota: {table_info.get('note', 'Comparación limitada a anexo 1 y anexo 2')}")
-        print(f"  Status: {table_info['status']}")
-        print(f"  Similitud total: {table_info['total_similarity']:.1%}")
-        print(f"  Items coincidentes: {table_info['summary']['matches']}")
-        print(f"  Items solo en anexo 1: {table_info['summary']['anexo1_only']}")
-        print(f"  Items solo en anexo 2: {table_info['summary']['anexo2_only']}")
+        if args.verbose and tabla_info['items_coincidentes']:
+            print(f"\n   🔍 DETALLE DE ITEMS QUE COINCIDEN:")
+            for i, item in enumerate(tabla_info['items_coincidentes'][:5], 1):  # Mostrar máximo 5
+                print(f"     {i}. {item['status']} ({item['similitud']})")
+                print(f"        📄 Anexo 1: {item['anexo1']}")
+                print(f"        📄 Anexo 2: {item['anexo2']}")
+            
+            if len(tabla_info['items_coincidentes']) > 5:
+                print(f"     ... y {len(tabla_info['items_coincidentes']) - 5} items más")
         
-        if args.verbose and table_info['matched_items']:
-            print(f"\nDETALLE DE ITEMS COINCIDENTES:")
-            for i, match in enumerate(table_info['matched_items'], 1):
-                print(f"  Match {i}:")
-                print(f"    Anexo1: Cant={match['anexo1_item'].get('cantidad', 'N/A')} - {match['anexo1_item'].get('descripcion', 'N/A')}")
-                print(f"    Anexo2: Cant={match['anexo2_item'].get('cantidad', 'N/A')} - {match['anexo2_item'].get('descripcion', 'N/A')}")
-                print(f"    Similitud cantidad: {match['cantidad_similarity']:.1%}")
-                print(f"    Similitud descripción: {match['descripcion_similarity']:.1%}")
-                print(f"    Status: {match['status']}")
+        if tabla_info['items_anexo1_unicos']:
+            print(f"\n   📦 ITEMS ÚNICOS EN ANEXO 1:")
+            for item in tabla_info['items_anexo1_unicos'][:3]:
+                print(f"     • Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(tabla_info['items_anexo1_unicos']) > 3:
+                print(f"     ... y {len(tabla_info['items_anexo1_unicos']) - 3} items más")
         
-        if table_info['anexo1_only']:
-            print(f"\n  Items SOLO en anexo1:")
-            for item in table_info['anexo1_only']:
-                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+        if tabla_info['items_anexo2_unicos']:
+            print(f"\n   📦 ITEMS ÚNICOS EN ANEXO 2:")
+            for item in tabla_info['items_anexo2_unicos'][:3]:
+                print(f"     • Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(tabla_info['items_anexo2_unicos']) > 3:
+                print(f"     ... y {len(tabla_info['items_anexo2_unicos']) - 3} items más")
         
-        if table_info['anexo2_only']:
-            print(f"\n  Items SOLO en anexo2:")
-            for item in table_info['anexo2_only']:
-                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
-        
-        print(f"\nNOTA IMPORTANTE:")
-        print(f"  - Los campos básicos se comparan entre los 3 documentos")
-        print(f"  - La tabla de insumos se compara únicamente entre anexo 1 y anexo 2")
-        print(f"  - El anexo 3 NO participa en la comparación de tabla de insumos")
+        print(f"\n💡 NOTA IMPORTANTE:")
+        print(f"   {resumen['nota_importante']}")
         
     else:
-        # Comparación tradicional de 2 documentos
+        # Mostrar resultados de comparación de 2 documentos de manera CLARA
+        print("=" * 60)
+        print("🔍 REPORTE DE COMPARACIÓN DE DOCUMENTOS (ANEXO 1 vs ANEXO 2)")
+        print("=" * 60)
+        estado_simple = "✅ DOCUMENTOS CORRECTOS" if report['overall_status'] == "Correcto" else "⚠️ REQUIERE REVISIÓN"
+        print(f"📋 {estado_simple}")
+        print(f"📈 Confianza general: {report['confidence_score']:.0%}")
         print()
         
-        # Crear matcher y comparar
-        matcher = DocumentMatcher()
-        comparison = matcher.compare_documents(anexo1_data, anexo2_data)
-        report = matcher.generate_report(comparison)
-        
-        # Mostrar resultados de comparación de 2 documentos
-        print("=" * 60)
-        print("REPORTE DE COMPARACIÓN DE DOCUMENTOS")
-        print("=" * 60)
-        print(f"Status General: {report['overall_status']}")
-        print(f"Confianza: {report['confidence_score']:.1%}")
-        print()
-        
-        print("COMPARACIÓN POR CAMPOS:")
-        print("-" * 60)
+        print("📝 COMPARACIÓN POR CAMPOS:")
+        print("-" * 40)
         for field, data in report['field_comparisons'].items():
-            print(f"\n{field.upper()}:")
-            print(f"  Anexo 1: {data['anexo1_value']}")
-            print(f"  Anexo 2: {data['anexo2_value']}")
-            print(f"  Similitud: {data['similarity_score']:.1%}")
-            print(f"  Status: {data['status']}")
-            if args.verbose:
-                print(f"  Razón: {data['reason']}")
+            status_icon = "✅" if data['status'] == 'Correcto' else "⚠️"
+            print(f"\n🏷️  {field.upper()}: {status_icon}")
+            print(f"   📄 Anexo 1: {data['anexo1_value']}")
+            print(f"   📄 Anexo 2: {data['anexo2_value']}")
+            print(f"   📊 Similitud: {data['similarity_score']:.0%}")
+            if args.verbose and data['status'] != 'Correcto':
+                print(f"   💡 Razón: {data['reason']}")
         
-        print(f"\nRESUMEN:")
-        print(f"  Campos correctos: {report['summary']['correcto_count']}")
-        print(f"  Campos que requieren revisión: {report['summary']['revision_count']}")
-        print(f"  Total de campos: {report['summary']['total_fields']}")
+        print(f"\n📊 RESUMEN DE CAMPOS:")
+        print(f"   ✅ Campos correctos: {report['summary']['correcto_count']}")
+        print(f"   ⚠️ Campos que requieren revisión: {report['summary']['revision_count']}")
+        print(f"   📋 Total de campos: {report['summary']['total_fields']}")
         
-        # Mostrar información de tabla
+        # Mostrar información de tabla simplificada
         table_info = report['table_comparison']
-        print(f"\nCOMPARACIÓN DE TABLA:")
-        print(f"  Status de tabla: {table_info['status']}")
-        print(f"  Similitud total: {table_info['total_similarity']:.1%}")
-        print(f"  Items coincidentes: {table_info['summary']['matches']}")
-        print(f"  Items solo en anexo1: {table_info['summary']['anexo1_only']}")
-        print(f"  Items solo en anexo2: {table_info['summary']['anexo2_only']}")
+        tabla_status_icon = "✅" if table_info['status'] == 'Correcto' else "⚠️"
+        print(f"\n📦 TABLA DE INSUMOS: {tabla_status_icon}")
+        print(f"   📈 Similitud total: {table_info['total_similarity']:.0%}")
+        print(f"   🔢 Items coincidentes: {table_info['summary']['matches']}")
+        print(f"   📋 Items solo en anexo1: {table_info['summary']['anexo1_only']}")
+        print(f"   📋 Items solo en anexo2: {table_info['summary']['anexo2_only']}")
         
         if args.verbose and table_info['matched_items']:
-            print(f"\nDETALLE DE ITEMS COINCIDENTES:")
-            for i, match in enumerate(table_info['matched_items'], 1):
-                print(f"  Match {i}:")
-                print(f"    Anexo1: Cant={match['anexo1_item'].get('cantidad', 'N/A')} - {match['anexo1_item'].get('descripcion', 'N/A')}")
-                print(f"    Anexo2: Cant={match['anexo2_item'].get('cantidad', 'N/A')} - {match['anexo2_item'].get('descripcion', 'N/A')}")
-                print(f"    Similitud cantidad: {match['cantidad_similarity']:.1%}")
-                print(f"    Similitud descripción: {match['descripcion_similarity']:.1%}")
-                print(f"    Status: {match['status']}")
+            print(f"\n   🔍 DETALLE DE ITEMS COINCIDENTES:")
+            for i, match in enumerate(table_info['matched_items'][:5], 1):
+                match_icon = "✅" if match['status'] == 'Correcto' else "⚠️"
+                print(f"     {i}. {match_icon} (Similitud: {match['overall_similarity']:.0%})")
+                print(f"        📄 Anexo1: Cant={match['anexo1_item'].get('cantidad', 'N/A')} - {match['anexo1_item'].get('descripcion', 'N/A')}")
+                print(f"        📄 Anexo2: Cant={match['anexo2_item'].get('cantidad', 'N/A')} - {match['anexo2_item'].get('descripcion', 'N/A')}")
+            
+            if len(table_info['matched_items']) > 5:
+                print(f"     ... y {len(table_info['matched_items']) - 5} items más")
         
         if table_info['anexo1_only']:
-            print(f"\n  Items SOLO en anexo1:")
-            for item in table_info['anexo1_only']:
-                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            print(f"\n   📦 ITEMS ÚNICOS EN ANEXO1:")
+            for item in table_info['anexo1_only'][:3]:
+                print(f"     • Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(table_info['anexo1_only']) > 3:
+                print(f"     ... y {len(table_info['anexo1_only']) - 3} items más")
         
         if table_info['anexo2_only']:
-            print(f"\n  Items SOLO en anexo2:")
-            for item in table_info['anexo2_only']:
-                print(f"    - Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            print(f"\n   📦 ITEMS ÚNICOS EN ANEXO2:")
+            for item in table_info['anexo2_only'][:3]:
+                print(f"     • Cant={item.get('cantidad', 'N/A')} - {item.get('descripcion', 'N/A')}")
+            if len(table_info['anexo2_only']) > 3:
+                print(f"     ... y {len(table_info['anexo2_only']) - 3} items más")
     
     # Guardar reporte si se especifica
     if args.output:

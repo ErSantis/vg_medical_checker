@@ -230,12 +230,10 @@ def extract_tabla_insumos(tokens: List[dict]) -> List[Dict[str, Any]]:
     
     # Si encontramos texto relacionado con insumos, parsearlo
     if insumos_text.strip():
-        print(f"DEBUG: Texto de insumos encontrado: '{insumos_text.strip()}'")
         insumos = parse_insumos_text(insumos_text)
     
     # Si no encontramos nada, buscar directamente en el texto completo con patrón genérico
     if not insumos:
-        print(f"DEBUG: Buscando en texto completo...")
         # Patrón completamente genérico: cualquier texto seguido de ×número sin letra
         patron_general = r'([^,×x\n]+)\s*[×x]\s*(\d+)(?![a-zA-Z])'
         matches = re.findall(patron_general, full_text, re.IGNORECASE)
@@ -258,7 +256,6 @@ def parse_insumos_text(text: str) -> List[Dict[str, Any]]:
     
     # Limpiar el texto
     text = text.strip()
-    print(f"DEBUG: Texto completo a procesar: {repr(text[:300])}")
     
     # Buscar todas las posiciones donde aparece "GASTO QUIRÚRGICO:"
     import re
@@ -266,8 +263,6 @@ def parse_insumos_text(text: str) -> List[Dict[str, Any]]:
     # Encontrar todas las ocurrencias de "GASTO QUIRÚRGICO:"
     pattern = re.compile(r'gasto\s+quirúrgico:\s*', re.IGNORECASE)
     matches = list(pattern.finditer(text))
-    
-    print(f"DEBUG: Encontré {len(matches)} secciones de GASTO QUIRÚRGICO")
     
     for match in matches:
         start_pos = match.end()  # Posición después de "GASTO QUIRÚRGICO:"
@@ -283,14 +278,10 @@ def parse_insumos_text(text: str) -> List[Dict[str, Any]]:
         else:
             section_text = remaining_text
         
-        print(f"DEBUG: Sección extraída: {repr(section_text[:200])}")
-        
         # Ahora dividir por comas y procesar cada insumo
         items = [item.strip() for item in section_text.split(',') if item.strip()]
         
         for item in items:
-            print(f"DEBUG: Procesando item: {repr(item[:50])}")
-            
             # Buscar patrón: descripción × cantidad AL FINAL
             # La cantidad real está solo al final del item, no en medio
             match = re.search(r'^(.+?)\s*[×x]\s*(\d+)\s*$', item, re.IGNORECASE)
@@ -303,7 +294,6 @@ def parse_insumos_text(text: str) -> List[Dict[str, Any]]:
                 # NO asumir contenido específico - usar el item completo como descripción
                 descripcion = item.strip()
                 cantidad = 1
-                print(f"DEBUG: ✓ Sin cantidad explícita, asumiendo 1: {descripcion}")
                 
             # NO filtrar por contenido específico - solo verificar que tiene contenido válido
             if len(descripcion) > 3:
@@ -311,9 +301,6 @@ def parse_insumos_text(text: str) -> List[Dict[str, Any]]:
                     'descripcion': descripcion,
                     'cantidad': cantidad
                 })
-                print(f"DEBUG: ✓ Agregado: {descripcion} x{cantidad}")
-            else:
-                print(f"DEBUG: ✗ Descartado (muy corto): {descripcion}")
     
     return insumos
 
@@ -413,8 +400,6 @@ def process_pdf_anexo3(path) -> Dict[str, Any]:
     
     # Procesar TODAS las páginas del PDF
     for page_num in range(len(doc)):
-        print(f"DEBUG: Procesando página {page_num + 1} de {len(doc)}")
-        
         page = doc[page_num]
         
         # Convertir página a imagen con alta resolución
@@ -464,9 +449,6 @@ def combine_page_results(page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         
         # Combinar tokens
         all_tokens.extend(page_result['raw_tokens'])
-        
-        # Debug por página
-        print(f"DEBUG: Página {page_result.get('page_number', '?')}: {len(page_result['tabla_insumos'])} insumos, {len(page_result['raw_tokens'])} tokens")
     
     # Eliminar duplicados de insumos - mantener solo UNA instancia de cada insumo único
     unique_insumos = []
