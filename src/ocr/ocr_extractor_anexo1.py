@@ -418,7 +418,6 @@ def process_image(image_bgr: np.ndarray) -> Dict[str, Any]:
     return {
         'extracted_fields': kv,
         'table_data': table_data,
-        'raw_tokens': items,
     }
 
 def process_pdf(path: Path) -> Dict[str, Any]:

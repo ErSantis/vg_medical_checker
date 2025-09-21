@@ -1,0 +1,52 @@
+{
+  "extracted_fields": {
+    "fecha_impresion": "24/12/2024 22:30",
+    "documento": "123459780",
+    "nombre": "ANDREA ABRIL XIQUES",
+    "medico_tratante": "FLORENCIO ORQUÍDEO ROSAS BLANCO",
+    "lugar": "Bucaramanga Santander"
+  },
+  "tabla_insumos": [
+    {
+      "descripcion": "Tornillo encefálico 3.5x48 mm",
+      "cantidad": 1
+    },
+    {
+      "descripcion": "Tornillo encefálico 3.5×50 mm",
+      "cantidad": 2
+    },
+    {
+      "descripcion": "Tornillo encefálico 3.5×55 mm",
+      "cantidad": 7
+    },
+    {
+      "descripcion": "Placa curvanevios",
+      "cantidad": 16
+    },
+    {
+      "descripcion": "Placa curvanevios Curvanerv ×10h",
+      "cantidad": 1
+    },
+    {
+      "descripcion": "Placa curvanevios Curvanerv ×16h",
+      "cantidad": 1
+    },
+    {
+      "descripcion": "Pin Smartman 2.0",
+      "cantidad": 3
+    },
+    {
+      "descripcion": "Placa curvanevios Curvanery ×16h",
+      "cantidad": 1
+    },
+    {
+      "descripcion": "Tonillo encefálico 3.5×48 mm",
+      "cantidad": 1
+    }
+  ],
+  "summary": {
+    "total_campos": 5,
+    "total_insumos": 9,
+    "total_tokens": 350
+  }
+}
