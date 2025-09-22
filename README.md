@@ -5,7 +5,7 @@
 ```bash
 # 1. Clonar repositorio
 git clone <url-del-repositorio>
-cd vgmedical_checker
+cd vg_medical_checker
 
 # 2. Crear entorno virtual
 python -m venv .venv
