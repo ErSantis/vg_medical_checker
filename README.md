@@ -1,4 +1,4 @@
-# VG MedicalEl sistema compara automáticamente los campos básicos entre los tres documentos y verifica la consistencia de la tabla de insumos entre el Anexo 1 y Anexo 2, proporcionando reportes claros sobre discrepancias y recomendaciones de revisión.
+# VG MedicalEl sistema compara automáticamente los campos básicos entre los tres documentos y verifica la consistencia de la tabla de insumos entre los anexos, proporcionando reportes claros sobre discrepancias y recomendaciones de revisión.
 
 ## ⚡ Inicio Rápido
 
